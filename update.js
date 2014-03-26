@@ -16,7 +16,7 @@ var fs = require('fs');
 
 process.on('uncaughtException', function(err) {
   console.log('Caught exception: ' , err);
-//  process.exit(3);
+  process.exit(3);
 });
 
 
@@ -168,7 +168,7 @@ runmyapp=function(cb)
  cb();
 }
 
-if(false)// uncomment to test
+//if(false)// uncomment to test
 getlastcommit(function(data){
   getgitheadhash(function(hash)
   {
@@ -190,5 +190,5 @@ getlastcommit(function(data){
 });
 
 
-var  repl = require("repl");repl.start({ useGlobal:true,  useColors:true, });// uncomment to test
+//var  repl = require("repl");repl.start({ useGlobal:true,  useColors:true, });// uncomment to test
 
