@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>Bitcoin Rates</title>
+<style type="text/css">
+	html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+
+	background: #000000;
+	color: #CA0000;  /* Text color */
+
+	}
+	#text {
+	text-align: center;
+	vertical-align: middle;
+        font-family: Arial, sans-serif;
+        font-size:50px;
+        font-weight:bold;
+	}
+body{
+ /*width:100%;display:block;position:absolute;*/
+ background-color:#111;
+ background-image: radial-gradient(#300 50%, #300 60%,transparent 65%);
+ background-size:10px 10px;
+ background-position: 0 0;
+ /*text-align:center;*/
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) { 
+
+#text{
+ color: #e00;
+ background-image: radial-gradient(#f00 50%, #600 60%,transparent 65%);
+ background-size:5px 5px;
+ background-position: 0 0;
+ -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent;    
+}
+}
+</style>
+<script type="text/javascript">
+//tinyxhr by Shimon Doodkin
+function tinyxhr(url,cb,method,post,contenttype){var c=url,a=cb,i=method,f=post,b=contenttype;var d,h;try{h=new XMLHttpRequest()}catch(g){try{h=new ActiveXObject("Msxml2.XMLHTTP")}catch(g){if(console){console.log("tinyxhr: XMLHttpRequest not supported")}return null}}d=setTimeout(function(){h.abort();a(new Error("tinyxhr: aborted by a timeout"),"",h)},10000);h.onreadystatechange=function(){if(h.readyState!=4){return}clearTimeout(d);a(h.status!=200?new Error("tinyxhr: server respnse status is "+h.status):false,h.responseText,h)};h.open(i?i.toUpperCase():"GET",c,true);if(!f){h.send()}else{h.setRequestHeader("Content-type",b?b:"application/x-www-form-urlencoded");h.send(f)}};
+
+Number.prototype.formatMoney = function(c, d, t){
+var n = this, 
+    c = isNaN(c = Math.abs(c)) ? 2 : c, 
+    d = d == undefined ? "." : d, 
+    t = t == undefined ? "," : t, 
+    s = n < 0 ? "-" : "", 
+    i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
+    j = (j = i.length) > 3 ? j % 3 : 0;
+   return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+ };
+
+var lastText = "";
+function update()
+{
+ tinyxhr("/rates",function (err,data,xhr)
+ {
+  if (err) { try{ console.log("goterr ",err,'status='+xhr.status); }catch(e){} }
+  //console.log(data) 
+  var rates=JSON.parse(data);
+  var text='Bit2c '+rates.bit2c.ll.formatMoney(2, '.', ',')+' ILS<br>'+
+           'BitGo '+rates.bitgo.currentSellingPrice.formatMoney(2, '.', ',')+' ILS<br>'+
+           'Bitcoin Average '+rates.bitcoinaverageUSD.ask.formatMoney(2, '.', ',')+' USD='+(rates.bitcoinaverageUSD.ask*rates.dollar[1]).formatMoney(2, '.', ',')+' ILS<br>'+
+           'Bitcoin Average '+rates.bitcoinaverageEUR.ask.formatMoney(2, '.', ',')+' EUR='+(rates.bitcoinaverageEUR.ask*rates.euro[1]).formatMoney(2, '.', ',')+' ILS<br>'+
+           'Bitstamp '+rates.bitstamp.ask.formatMoney(2, '.', ',')+' USD='+(rates.bitstamp.ask*rates.dollar[1]).formatMoney(2, '.', ',')+' ILS<br>'+
+           'Btc-e '+rates.btce.ticker.sell.formatMoney(2, '.', ',')+' USD='+(rates.btce.ticker.sell*rates.dollar[1]).formatMoney(2, '.', ',')+' ILS<br>'
+ 
+  if (lastText != text)
+  {
+   document.getElementById('text').innerHTML=text
+   lastText = text;
+  }
+ });
+}
+
+
+window.onload=function(){update();setInterval(update, 1000);};
+</script>
+</head>
+<body>
+<div style="width:100%; height:80%; display:table">
+<div id="text" style="width:100%; height:80%; display:table-cell"></div>
+</div>
+<div align="center"><span style="color:white">send tips to me: <a href="https://blockchain.info/address/1QJybGtq3wA3vz8izWvDMRTsrQL3RVDK9T">1QJybGtq3wA3vz8izWvDMRTsrQL3RVDK9T</a></span></div>
+</body>
+</html>
