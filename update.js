@@ -75,7 +75,7 @@ getgitheadhash=function(cb)
  var exec = require('child_process').exec,
     child;
 
- child = exec('git rev-parse HEAD',
+ child = exec('git rev-parse HEAD', {cwd:__dirname},
   function (error, stdout, stderr) {
      cb(stdout.trim());
     //console.log('stdout: ' + stdout);
@@ -93,21 +93,21 @@ var exec = require('child_process').exec,
 
  console.log(">>> git fetch origin");
 
- child1 = exec('git fetch origin',  function (error1, stdout1, stderr1) {
+ child1 = exec('git fetch origin', {cwd:__dirname},  function (error1, stdout1, stderr1) {
     console.log('stdout1: ' + stdout1);console.log('stderr1: ' + stderr1);
     if (error1 !== null) { console.log('exec error1: ' , error1);  }
     else
     {//1
 
  console.log(">>> git checkout");
- child2 = exec('git checkout',  function (error2, stdout2, stderr2) {
+ child2 = exec('git checkout', {cwd:__dirname},  function (error2, stdout2, stderr2) {
     console.log('stdout2: ' + stdout2);console.log('stderr2: ' + stderr2);
     if (error2 !== null) { console.log('exec error2: ' + error2);  }
     else
     {//2
 
  console.log(">>> git reset --hard origin/master");
- child3 = exec('git reset --hard origin/master',  function (error3, stdout3, stderr3) {
+ child3 = exec('git reset --hard origin/master', {cwd:__dirname},  function (error3, stdout3, stderr3) {
     console.log('stdout3: ' + stdout3);console.log('stderr3: ' + stderr3);
     if (error3 !== null) { console.log('exec error3: ' + error3);  }
     else
