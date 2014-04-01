@@ -67,12 +67,15 @@ function update()
   if (err) { try{ console.log("goterr ",err,'status='+xhr.status); }catch(e){} }
   //console.log(data) 
   var rates=JSON.parse(data);
-  var text='Bit2c '+rates.bit2c.ll.formatMoney(2, '.', ',')+' ILS<br>'+
-           'BitGo '+rates.bitgo.currentSellingPrice.formatMoney(2, '.', ',')+' ILS<br>'+
-           'Bitcoin Average '+rates.bitcoinaverageUSD.ask.formatMoney(2, '.', ',')+' USD='+(rates.bitcoinaverageUSD.ask*rates.dollar[1]).formatMoney(2, '.', ',')+' ILS<br>'+
-           'Bitcoin Average '+rates.bitcoinaverageEUR.ask.formatMoney(2, '.', ',')+' EUR='+(rates.bitcoinaverageEUR.ask*rates.euro[1]).formatMoney(2, '.', ',')+' ILS<br>'+
-           'Bitstamp '+rates.bitstamp.ask.formatMoney(2, '.', ',')+' USD='+(rates.bitstamp.ask*rates.dollar[1]).formatMoney(2, '.', ',')+' ILS<br>'+
-           'Btc-e '+rates.btce.ticker.sell.formatMoney(2, '.', ',')+' USD='+(rates.btce.ticker.sell*rates.dollar[1]).formatMoney(2, '.', ',')+' ILS<br>'
+  var p=5;
+  var text='Bits of Gold '+(rates.bitsofgold.sell/1000).formatMoney(p, '.', ',')+' <br>'+
+           'Bit2c '+(rates.bit2c.ll/1000).formatMoney(p, '.', ',')+' <br>'+
+           'BitGo '+(rates.bitgo.currentSellingPrice/1000).formatMoney(p, '.', ',')+'<br>'+
+           'Bitcoin Average '+(rates.bitcoinaverageUSD.ask/1000).formatMoney(p, '.', ',')+' USD='+(rates.bitcoinaverageUSD.ask*rates.dollar[1]/1000).formatMoney(p, '.', ',')+' ILS<br>'+
+           'Bitcoin Average '+(rates.bitcoinaverageEUR.ask/1000).formatMoney(p, '.', ',')+' EUR='+(rates.bitcoinaverageEUR.ask*rates.euro[1]/1000).formatMoney(p, '.', ',')+' ILS<br>'+
+           'Bitstamp '+(rates.bitstamp.ask/1000).formatMoney(p, '.', ',')+' USD='+(rates.bitstamp.ask*rates.dollar[1]/1000).formatMoney(p, '.', ',')+' ILS<br>'+
+           'Btc-e '+(rates.btce.ticker.sell/1000).formatMoney(p, '.', ',')+' USD='+(rates.btce.ticker.sell*rates.dollar[1]/1000).formatMoney(p, '.', ',')+' ILS<br>' +
+           'Bitpay '+(rates.bitpay.filter(function(a){return a.code=='USD'})[0].rate/1000).formatMoney(p, '.', ',')+' USD='+(rates.bitpay.filter(function(a){return a.code=='ILS'})[0].rate/1000).formatMoney(p, '.', ',')+' ILS<br>'
  
   if (lastText != text)
   {
