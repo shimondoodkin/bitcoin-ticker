@@ -106,6 +106,6 @@ var  repl = require("repl");repl.start({ useGlobal:true,  useColors:true, });// 
 
 function run()
 {
- update(function(){setTimeout(run,2000);});
+ update(function(){console.log('done');setTimeout(run,2000);});
 }
 run()
