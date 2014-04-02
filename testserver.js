@@ -4,7 +4,7 @@ var https = require('https');
 var url = require('url');
 var fs = require('fs');
 var rest = require('restler');
-var async = request('async');
+var async = require('async');
 
 process.on('uncaughtException', function(err) {
   console.log('Caught exception: ' , err);
