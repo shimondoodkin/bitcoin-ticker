@@ -93,4 +93,9 @@ http.createServer(function (req, res) {
 console.log('Server running at http://127.0.0.1:3333/');
 var  repl = require("repl");repl.start({ useGlobal:true,  useColors:true, });// uncomment to test
 
-//update(function(){setTimeout(update,1000);});
+
+function run()
+{
+ update(function(){setTimeout(run,1000);});
+}
+run()
