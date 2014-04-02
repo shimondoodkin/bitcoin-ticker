@@ -1,0 +1,8 @@
+here are few hebrew fonts good for terminal,mono space ,small type.
+
+
+
+
+---
+probably using these fonts requires a license. use only if you have a licence.
+saved here as an archive for convineance of development, not for distribution.

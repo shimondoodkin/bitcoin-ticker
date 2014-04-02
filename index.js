@@ -6,7 +6,7 @@ var rest = require('restler');
 var async = require('async');
 
 process.on('uncaughtException', function(err) {
-  console.log('Caught exception: ' , err);
+  console.log('Caught exception: ' , err.stack);
   //process.exit(3);
 });
 
@@ -59,10 +59,66 @@ if(c.code=='ILS'){d.push(c);prev_ils=i}
  )
 }
 
+var Canvas = require('canvas')
+  , Font = Canvas.Font
+  , mcanvas = new Canvas(20,20)
+  , mctx = mcanvas.getContext('2d');
+
+var fontarr=false;
+function loadfonts(ctx)
+{
+ if (!Font) throw new Error('Need to compile with font support');
+ if(fontarr===false){ fontarr=[];fs.readdirSync(__dirname+'/fonts').forEach(function(a){
+var file= __dirname+'/fonts/'+a;
+var namea=a.toLowerCase().split('.');
+var name=namea[0]
+if(namea[namea.length-1]=='ttf')
+{
+var font = new Font(name, file);
+  //font.addFace(fontFile('PfennigBold.ttf'),   'bold');
+  //font.addFace(fontFile('PfennigItalic.ttf'), 'normal', 'italic');
+  //font.addFace(fontFile('PfennigBoldItalic.ttf'), 'bold', 'italic');
+ fontarr.push(font);
+}
+});}
+ if(ctx)
+ for(var i=0;i<fontarr.length;i++)
+ {
+  ctx.addFont(fontarr[i]);
+ }
+}
+loadfonts(mctx);
+
 var index=fs.readFileSync(__dirname+'/index.html')
 http.createServer(function (req, res) {
   if(req.url=='/rates'){  res.writeHead(200, {'Content-Type': 'text/javascript'}); res.end(JSON.stringify(rates, null, 2));}
   if(req.url=='/')     {  res.writeHead(200, {'Content-Type': 'text/html'}); res.end(index);}
+  if(req.url=='/image')     {
+
+mctx.antialias = 'none';
+mctx.font = '14px Impact';
+var te = mctx.measureText('Awesome!');
+te.height=
+ te.emHeightAscent//: 8,
++te.emHeightDescent;//: 2,
+
+te.top=
+ te.emHeightAscent //: 8
+-te.actualBoundingBoxAscen//: 7
+
+var canvas = new Canvas(te.width,te.height)
+  , ctx = canvas.getContext('2d');
+
+  ctx.antialias = 'none';
+  ctx.font = '14px Impact';
+  ctx.fillText("Awesome!", te.actualBoundingBoxLeft,te.emHeightAscent);
+  res.writeHead(200, {'Content-Type': 'image/gif'}); 
+
+var stream = canvas.createGIFStream();
+stream.on('data', function(chunk){ res.write(chunk); });
+stream.on('end', function(){ res.end() });
+
+}
   else                 {  res.writeHead(404, {'Content-Type': 'text/plain'}); res.end(':-), since '+d+'\n');}
 }).listen(3333);
 
