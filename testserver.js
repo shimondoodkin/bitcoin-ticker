@@ -1,6 +1,5 @@
 var d=new Date().toString();
 var http = require('http');
-var https = require('https');
 var url = require('url');
 var fs = require('fs');
 var rest = require('restler');
@@ -10,47 +9,6 @@ process.on('uncaughtException', function(err) {
   console.log('Caught exception: ' , err);
   //process.exit(3);
 });
-
-var etags={};
-httpget=function(uurl,parsejson,cb) /// doesnot calls cb on error or on update not required, for simplicity
-{
- var purl=url.parse(uurl);
-var options = {
-  hostname: purl.host,
-  port: purl.port?purl.port:(purl.protocol=='http'?80:443),
-  path: purl.path,
-  method: 'GET',
-  headers: {'User-Agent': 'basic http get'}
-};
-
-
-if(etags[uurl]) options.headers['If-None-Match']=etags[uurl];
-
-var req = (purl.protocol=='http'?http:https).request(options, function(res) {
-//  console.log("statusCode: ", res.statusCode);
-//  console.log("headers: ", res.headers);
-  if( res.headers.etag )
-    etags[uurl]=res.headers.etag
-  var data='';
-  res.on('data', function(d) {
-    data+=d;
-  });
-  res.on('end', function() {
-   if(res.statusCode!=200)
-     cb(new Error("status not 200,status is "+res.statusCode));
-   else if(parsejson) cb(null,JSON.parse(data));
-   else cb(null,data);
-   cb=function(){};
-  });
-});
-req.end();
-
-req.on('error', function(e) {
-  console.error(e);
-  cb(e);cb=function(){};
-});
-
-}
 
 rates={
  dollar:["USDILS=X",0,"1/1/2000","0:00pm"],
@@ -65,6 +23,7 @@ rates={
  bitpay: [{"code":"USD","name":"US Dollar","rate":0},{"code":"ILS","name":"Israeli Shekel","rate":0}]
 }
 
+var prev_ils=0,prev_usd=0;
 update=function(cb)
 {
  async.series(
@@ -81,14 +40,21 @@ update=function(cb)
   ,function(cb){try{ rest.get('https://bitpay.com/api/rates').on('complete', function(data) { if(typeof data=='object')
 {
 var d=[];
+if(data.length && data[prev_usd].code=='USD' && data[prev_ils].code=='ILS') 
+{
+ d=[data[prev_usd],data[prev_ils],{'code':'PREV'}];
+}
+else
 for(var c,i=0;i<data.length;i++)
 {
 c=data[i];
-if(c.code==='USD'&&c.code==='ILS')d.push(c);
+if(c.code=='USD'){d.push(c);prev_usd=i}
+if(c.code=='ILS'){d.push(c);prev_ils=i}
 }
  rates.bitpay=d;
 }
  cb(); });  } catch(e){console.log(e.stack);cb();} }
+
  ],cb
  )
 }
