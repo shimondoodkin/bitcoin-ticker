@@ -42,7 +42,7 @@ update=function(cb)
 var d=[];
 if(data.length && data[prev_usd].code=='USD' && data[prev_ils].code=='ILS') 
 {
- d=[data[prev_usd],data[prev_ils],{'code':'PREV'}];
+ d=[data[prev_usd],data[prev_ils]];
 }
 else
 for(var c,i=0;i<data.length;i++)
