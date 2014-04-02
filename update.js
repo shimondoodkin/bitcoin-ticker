@@ -114,7 +114,18 @@ var exec = require('child_process').exec,
     {//3
 
      console.log("git checkout reset done")
+
+ child3 = exec('npm rebuild', {cwd:__dirname},  function (error4, stdout4, stderr4) {
+    console.log('stdout4: ' + stdout4);console.log('stderr4: ' + stderr4);
+    if (error4 !== null) { console.log('exec error4: ' + error4);  }
+    else
+    {//4
+
+     console.log("npm rebuild done")
      cb();
+
+    }});//4
+
 
     }});//3
 
