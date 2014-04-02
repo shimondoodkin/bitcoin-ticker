@@ -118,8 +118,8 @@ console.log('Server running at http://127.0.0.1:3333/');
 var  repl = require("repl");repl.start({ useGlobal:true,  useColors:true, });// uncomment to test
 
 
-function run()
+runupdate=function()
 {
- update(function(){console.log('done');setTimeout(run,2000);});
+ update(function(){console.log('done');setTimeout(runupdate,2000);});
 }
-//run()
+runupdate()
