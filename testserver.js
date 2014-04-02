@@ -54,7 +54,7 @@ timer=setTimeout(function(){
   console.log('timeout aborted: '+uurl)
   req.abort();
   cb(new Error('timeout aborted: '+uurl));
-},3000);
+},10000);
 
 req.on('error', function(e) {
   if(aborted) return;
