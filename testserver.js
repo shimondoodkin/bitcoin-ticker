@@ -25,44 +25,51 @@ var options = {
 var aborted=false;
 if(etags[uurl]) options.headers['If-None-Match']=etags[uurl];
 
-var req = (purl.protocol=='http'?http:https).request(options, function(res) {
-//  console.log("statusCode: ", res.statusCode);
-//  console.log("headers: ", res.headers);
+var req = (purl.protocol=='http'?http:https).request(options, function(res)
+{
+  //  console.log("statusCode: ", res.statusCode);
+  //  console.log("headers: ", res.headers);
   if( res.headers.etag )
     etags[uurl]=res.headers.etag
   var data='';
+
   res.on('data', function(d) {
     if(aborted) return;
     data+=d;
   });
+
   res.on('end', function() {
    if(aborted) return;
    if(timer)clearTimeout(timer);
+   var t=cb;cb=null;
    if(res.statusCode==304)
-     cb(new Error("status not 200,status is "+res.statusCode),304);
+     return t(new Error("status not 200,status is "+res.statusCode),304);
    else if(res.statusCode!=200)
-     cb(new Error("status not 200,status is "+res.statusCode));
-   else if(parsejson) cb(null,JSON.parse(data));
-   else cb(null,data);
-   cb=function(){};
+     return t(new Error("status not 200,status is "+res.statusCode));
+   else if(parsejson) return t(null,JSON.parse(data));
+   else return t(null,data);
   });
+
 });
 req.end();
 
 timer=setTimeout(function(){
+  if(aborted) return;
   aborted=true;
   console.log('timeout aborted: '+uurl)
+  var t=cb;cb=null;
   req.abort();
-  cb(new Error('timeout aborted: '+uurl));
+  return t(new Error('timeout aborted: '+uurl));
 },10000);
 
 req.on('error', function(e) {
   if(aborted) return;
+  aborted=true;
   if(timer)clearTimeout(timer);
   console.error(e.stack);
-  cb(e);cb=function(){};
+  var t=cb;cb=null;
+  return t(e);
 });
-
 }
 
 rates={
