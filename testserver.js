@@ -78,7 +78,17 @@ update=function(cb)
   ,function(cb){try{ rest.get('https://api.bitcoinaverage.com/ticker/global/EUR/').on('complete', function(data) { if(typeof data=='object') rates.bitcoinaverageEUR=data;  }); cb();  } catch(e){console.log(e.stack);cb();} }
   ,function(cb){try{ rest.get('https://www.bitstamp.net/api/ticker/').on('complete', function(data) { if(typeof data=='object') Object.keys(data).forEach(function(a){data[a]=parseFloat(data[a])}); rates.bitstamp=data; cb(); });  } catch(e){console.log(e.stack);cb();} }
   ,function(cb){try{ rest.get('https://btc-e.com/api/2/btc_usd/ticker').on('complete', function(data) { data=JSON.parse(data); if(typeof data=='object') rates.btce=data;  }); cb(); } catch(e){console.log(e.stack);cb();} }
-  ,function(cb){try{ rest.get('https://bitpay.com/api/rates').on('complete', function(data) { if(typeof data=='object') rates.bitpay=data.filter(function(a){return a.code=='USD'||a.code=='ILS'}); cb(); });  } catch(e){console.log(e.stack);cb();} }
+  ,function(cb){try{ rest.get('https://bitpay.com/api/rates').on('complete', function(data) { if(typeof data=='object')
+{
+var d=[];
+for(var c,i=0;i<data.length;i++)
+{
+c=data[i];
+if(c.code==='USD'&&c.code==='ILS')d.push(c);
+}
+ rates.bitpay=d;
+}
+ cb(); });  } catch(e){console.log(e.stack);cb();} }
  ],cb
  )
 }
@@ -96,6 +106,6 @@ var  repl = require("repl");repl.start({ useGlobal:true,  useColors:true, });// 
 
 function run()
 {
- update(function(){setTimeout(run,1000);});
+ update(function(){setTimeout(run,2000);});
 }
 run()
