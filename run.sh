@@ -13,4 +13,4 @@ else
    export PATH="$PATH:/opt/node/bin"
 fi
 
-nohup node testserver.js mynodeapp 3>&1 2>&1 1>/dev/null </dev/null &
+nohup node index.js mynodeapp 3>&1 2>&1 1>/dev/null </dev/null &
