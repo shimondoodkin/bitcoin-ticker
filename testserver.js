@@ -14,62 +14,42 @@ process.on('uncaughtException', function(err) {
 var etags={};
 httpget=function(uurl,parsejson,cb) /// doesnot calls cb on error or on update not required, for simplicity
 {
- var timer,purl=url.parse(uurl);
+ var purl=url.parse(uurl);
 var options = {
   hostname: purl.host,
   port: purl.port?purl.port:(purl.protocol=='http'?80:443),
   path: purl.path,
   method: 'GET',
-  headers: {'User-Agent': 'Mozilla/5.0 (X11; U; Linux armv7l; en-US) AppleWebKit/534.16 (KHTML, like Gecko) Chrome/10.0.648.204 Safari/534.16'}
+  headers: {'User-Agent': 'basic http get'}
 };
-var aborted=false;
+
+
 if(etags[uurl]) options.headers['If-None-Match']=etags[uurl];
 
-var req = (purl.protocol=='http'?http:https).request(options, function(res)
-{
-  //  console.log("statusCode: ", res.statusCode);
-  //  console.log("headers: ", res.headers);
+var req = (purl.protocol=='http'?http:https).request(options, function(res) {
+//  console.log("statusCode: ", res.statusCode);
+//  console.log("headers: ", res.headers);
   if( res.headers.etag )
     etags[uurl]=res.headers.etag
   var data='';
-
   res.on('data', function(d) {
-    if(aborted) return;
     data+=d;
   });
-
   res.on('end', function() {
-   if(aborted) return;
-   if(timer)clearTimeout(timer);
-   var t=cb;cb=null;
-   if(res.statusCode==304)
-     return t(new Error("status not 200,status is "+res.statusCode),304);
-   else if(res.statusCode!=200)
-     return t(new Error("status not 200,status is "+res.statusCode));
-   else if(parsejson) return t(null,JSON.parse(data));
-   else return t(null,data);
+   if(res.statusCode!=200)
+     cb(new Error("status not 200,status is "+res.statusCode));
+   else if(parsejson) cb(null,JSON.parse(data));
+   else cb(null,data);
+   cb=function(){};
   });
-
 });
 req.end();
 
-timer=setTimeout(function(){
-  if(aborted) return;
-  aborted=true;
-  console.log('timeout aborted: '+uurl)
-  var t=cb;cb=null;
-  req.abort();
-  return t(new Error('timeout aborted: '+uurl));
-},10000);
-
 req.on('error', function(e) {
-  if(aborted) return;
-  aborted=true;
-  if(timer)clearTimeout(timer);
-  console.error(e.stack);
-  var t=cb;cb=null;
-  return t(e);
+  console.error(e);
+  cb(e);cb=function(){};
 });
+
 }
 
 rates={
@@ -89,17 +69,16 @@ update=function(cb)
 {
  async.series(
  [
-   function(cb){try{ httpget('http://download.finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=USDILS=X',false, function(err,data) { if(err){if(data!=304)console.log(err.stack); return cb();}  data=JSON.parse("["+data.trim().replace(/""/,"\\\"")+']'); if(typeof data=='object')rates.dollar=data; cb(); });  } catch(e){console.log(e.stack);cb();} }
-  ,function(cb){try{ httpget('http://download.finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=EURILS=X',false, function(err,data) { if(err){if(data!=304)console.log(err.stack); return cb();}  data=JSON.parse("["+data.trim().replace(/""/,"\\\"")+']'); if(typeof data=='object')rates.euro=data; cb(); });  } catch(e){console.log(e.stack);cb();} }
-  ,function(cb){try{ httpget('https://www.bitsofgold.co.il/api/btc',true, function(err,data) { if(err){if(data!=304)console.log(err.stack); return cb();}  if(typeof data=='object') rates.bitsofgold=data; cb();  });  } catch(e){console.log(e.stack);cb();} }
-  ,function(cb){try{ httpget('https://www.bit2c.co.il/Exchanges/BtcNis/Ticker.json',true, function(err,data) { if(err){if(data!=304)console.log(err.stack); return cb();}  if(typeof data=='object') rates.bit2c=data; cb();  });  } catch(e){console.log(e.stack);cb();} }
-  ,function(cb){try{ httpget('https://www.bitgo.co.il/components/loadcontrol.aspx?cn=statspanel&json=true',true, function(err,data) { if(err){if(data!=304)console.log(err.stack); return cb();}  if(typeof data=='object')  rates.bitgo=data; cb(); });  } catch(e){console.log(e.stack);cb();} }
-  ,function(cb){try{ httpget('https://api.bitcoinaverage.com/ticker/global/USD/',true, function(err,data) { if(err){if(data!=304)console.log(err.stack); return cb();}  if(typeof data=='object') rates.bitcoinaverageUSD=data;  }); cb(); } catch(e){console.log(e.stack);cb();} }
-  ,function(cb){try{ httpget('https://api.bitcoinaverage.com/ticker/global/EUR/',true, function(err,data) { if(err){if(data!=304)console.log(err.stack); return cb();}  if(typeof data=='object') rates.bitcoinaverageEUR=data;  }); cb();  } catch(e){console.log(e.stack);cb();} }
-  ,function(cb){try{ httpget('https://www.bitstamp.net/api/ticker/',true, function(err,data) { if(err){if(data!=304)console.log(err.stack); return cb();}  if(typeof data=='object') Object.keys(data).forEach(function(a){data[a]=parseFloat(data[a])}); rates.bitstamp=data; cb(); });  } catch(e){console.log(e.stack);cb();} }
-  ,function(cb){try{ httpget('https://btc-e.com/api/2/btc_usd/ticker',true, function(err,data) { if(err){if(data!=304)console.log(err.stack); return cb();}  if(typeof data=='object') rates.btce=data;  }); cb(); } catch(e){console.log(e.stack);cb();} }
-  ,function(cb){try{ httpget('https://bitpay.com/api/rates',true, function(err,data) { if(err){if(data!=304)console.log(err.stack); return cb();} 
-if(typeof data=='object')
+   function(cb){try{ rest.get('http://download.finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=USDILS=X').on('complete', function(data) {  data=JSON.parse("["+data.trim().replace(/""/,"\\\"")+']'); if(typeof data=='object')rates.dollar=data; cb(); });  } catch(e){console.log(e.stack);cb();} }
+  ,function(cb){try{ rest.get('http://download.finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=EURILS=X').on('complete', function(data) {  data=JSON.parse("["+data.trim().replace(/""/,"\\\"")+']'); if(typeof data=='object')rates.euro=data; cb(); });  } catch(e){console.log(e.stack);cb();} }
+  ,function(cb){try{ rest.get('https://www.bitsofgold.co.il/api/btc').on('complete', function(data) { if(typeof data=='object') rates.bitsofgold=data; cb();  });  } catch(e){console.log(e.stack);cb();} }
+  ,function(cb){try{ rest.get('https://www.bit2c.co.il/Exchanges/BtcNis/Ticker.json').on('complete', function(data) { if(typeof data=='object') rates.bit2c=data; cb();  });  } catch(e){console.log(e.stack);cb();} }
+  ,function(cb){try{ rest.get('https://www.bitgo.co.il/components/loadcontrol.aspx?cn=statspanel&json=true').on('complete', function(data) {  if(typeof data=='object')  rates.bitgo=data; cb(); });  } catch(e){console.log(e.stack);cb();} }
+  ,function(cb){try{ rest.get('https://api.bitcoinaverage.com/ticker/global/USD/').on('complete', function(data) { if(typeof data=='object') rates.bitcoinaverageUSD=data;  }); cb(); } catch(e){console.log(e.stack);cb();} }
+  ,function(cb){try{ rest.get('https://api.bitcoinaverage.com/ticker/global/EUR/').on('complete', function(data) { if(typeof data=='object') rates.bitcoinaverageEUR=data;  }); cb();  } catch(e){console.log(e.stack);cb();} }
+  ,function(cb){try{ rest.get('https://www.bitstamp.net/api/ticker/').on('complete', function(data) { if(typeof data=='object') Object.keys(data).forEach(function(a){data[a]=parseFloat(data[a])}); rates.bitstamp=data; cb(); });  } catch(e){console.log(e.stack);cb();} }
+  ,function(cb){try{ rest.get('https://btc-e.com/api/2/btc_usd/ticker').on('complete', function(data) { data=JSON.parse(data); if(typeof data=='object') rates.btce=data;  }); cb(); } catch(e){console.log(e.stack);cb();} }
+  ,function(cb){try{ rest.get('https://bitpay.com/api/rates').on('complete', function(data) { if(typeof data=='object')
 {
 var d=[];
 for(var c,i=0;i<data.length;i++)
@@ -125,8 +104,8 @@ console.log('Server running at http://127.0.0.1:3333/');
 var  repl = require("repl");repl.start({ useGlobal:true,  useColors:true, });// uncomment to test
 
 
-runupdate=function()
+function run()
 {
- update(function(){console.log('done');setTimeout(runupdate,2000);});
+ update(function(){console.log('done');setTimeout(run,2000);});
 }
-runupdate()
+run()
