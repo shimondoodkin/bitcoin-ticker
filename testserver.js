@@ -14,7 +14,7 @@ process.on('uncaughtException', function(err) {
 var etags={};
 httpget=function(uurl,parsejson,cb) /// doesnot calls cb on error or on update not required, for simplicity
 {
- var purl=url.parse(uurl);
+ var timer,purl=url.parse(uurl);
 var options = {
   hostname: purl.host,
   port: purl.port?purl.port:(purl.protocol=='http'?80:443),
@@ -49,17 +49,16 @@ var req = (purl.protocol=='http'?http:https).request(options, function(res) {
 });
 req.end();
 
-var timer=setTimeout(function(){
+timer=setTimeout(function(){
   aborted=true;
   console.log('timeout aborted: '+uurl)
   req.abort();
   cb(new Error('timeout aborted: '+uurl));
-},5000);
-
+},3000);
 
 req.on('error', function(e) {
   if(aborted) return;
-  clearTimeout(timer);
+  if(timer)clearTimeout(timer);
   console.error(e.stack);
   cb(e);cb=function(){};
 });
@@ -123,4 +122,4 @@ function run()
 {
  update(function(){console.log('done');setTimeout(run,2000);});
 }
-run()
+//run()
