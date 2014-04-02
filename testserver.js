@@ -37,7 +37,7 @@ var req = (purl.protocol=='http'?http:https).request(options, function(res) {
   });
   res.on('end', function() {
    if(aborted) return;
-   clearTimeout(timer);
+   if(timer)clearTimeout(timer);
    if(res.statusCode==304)
      cb(new Error("status not 200,status is "+res.statusCode),304);
    else if(res.statusCode!=200)
@@ -54,7 +54,7 @@ var timer=setTimeout(function(){
   console.log('timeout aborted: '+uurl)
   req.abort();
   cb(new Error('timeout aborted: '+uurl));
-},3000);
+},5000);
 
 
 req.on('error', function(e) {
