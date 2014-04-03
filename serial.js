@@ -12,7 +12,7 @@ serialPort.list(function (err, ports)
   {
    var myserial = new SerialPort(port.comName, { baudrate: 115200
    });
-   serials[port.comName]=myserial;
+   serials[port.comName.replace(/\//g,'')]=myserial;
    myserial.on('close', function(a){console.log('serial closed',a,myserial.path)})
 
    myserial.on('error', function(a){console.log('serial error',a,myserial.path)})
