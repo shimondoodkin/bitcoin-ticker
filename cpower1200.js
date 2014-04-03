@@ -605,7 +605,7 @@ left:'\u0000'
 ,right:'\u0002'
 }
 
-var specialEffectForTextAndPictureOrderdNames=exports.effect
+var specialEffectForTextAndPictureOrderdNames=exports.effect=
 ["Draw" // 0
 ,"Open from left" // 1
 ,"Open from right" // 2
