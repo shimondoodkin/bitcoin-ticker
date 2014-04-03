@@ -63,6 +63,7 @@ var Canvas = require((require('os').arch()=='arm'?'./arm_node_modules/':'')+'can
   , Font = Canvas.Font
   , mcanvas = new Canvas(20,20)
   , mctx = mcanvas.getContext('2d');
+var GifEncoder = require('gif-encoder');
 
 var fontarr=false;
 function loadfonts(ctx)
@@ -114,9 +115,24 @@ var canvas = new Canvas(te.width,te.height)
   ctx.fillText("Awesome!", te.actualBoundingBoxLeft,te.emHeightAscent);
   res.writeHead(200, {'Content-Type': 'image/gif'}); 
 
-var stream = canvas.createGIFStream();
-stream.on('data', function(chunk){ res.write(chunk); });
-stream.on('end', function(){ res.end() });
+//var stream = canvas.createPNGStream();
+
+// Create a 10 x 10 gif
+var gif = new GifEncoder(canvas.width, canvas.height);
+
+// using an rgba array of pixels [r, g, b, a, ... continues on for every pixel]
+// This can be collected from a <canvas> via context.getImageData(0, 0, width, height).data
+//var pixels = [0, 0, 0, 255/*, ...*/];
+
+// Collect output
+//var file = require('fs').createWriteStream('img.gif');
+gif.pipe(res);
+
+// Write out the image into memory
+gif.writeHeader();
+gif.addFrame(ctx.getImageData(0,0,canvas.width,canvas.height).data);
+// gif.addFrame(pixels); // Write subsequent rgba arrays for more frames
+gif.finish();
 
 }
   else                 {  res.writeHead(404, {'Content-Type': 'text/plain'}); res.end(':-), since '+d+'\n');}
