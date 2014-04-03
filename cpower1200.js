@@ -790,7 +790,7 @@ exports.queryFreeDiskSpace=function()
 
 exports.serialstart=function()
 {
-var serialPort = require("serialport");
+var serialPort = require((require('os').arch()=='arm'?'./arm_node_modules/':'')+"serialport");
 var SerialPort = serialPort.SerialPort
 
 serialPort.list(function (err, ports)
