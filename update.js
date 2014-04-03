@@ -15,7 +15,7 @@ var https = require('https');
 var fs = require('fs');
 
 process.on('uncaughtException', function(err) {
-  console.log('Caught exception: ' , err);
+  console.log('Caught exception: ' , err.stack);
   process.exit(3);
 });
 
@@ -122,7 +122,7 @@ var exec = require('child_process').exec,
 //    {//4
 
 //     console.log("npm rebuild done")
-     cb();
+       cb();
 
 //    }});//4
 
@@ -172,10 +172,12 @@ killmyapp=function(cb)// this function should be tested
 
 runmyapp=function(cb)
 {
- var fs = require('fs');
  var cp = require('child_process');
- var child = cp.spawn(__dirname+'/run.sh', [], { detached: true, stdio: [ 'ignore', 'ignore', 'ignore' ] });
- child.unref();
+ try
+ {
+  var child = cp.spawn(__dirname+'/run.sh', [], { detached: true, stdio: [ 'ignore', 'ignore', 'ignore' ] });
+  child.unref();
+ }catch(e){ console.log(e.stack) }
  cb();
 }
 

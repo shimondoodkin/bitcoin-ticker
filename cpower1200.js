@@ -135,7 +135,7 @@ function keysbyvalues_cached(inobj)
  return obj;
 }
 
-exports.parsepacket=function(data)
+var parsepacket=exports.parsepacket=function(data)
 {
   if(data.length<2) throw new Error('packet length too short');
   
@@ -425,20 +425,30 @@ var rich3=function(color,size,letters)
  return text;  
 }
 
-//yes - should work;
-exports.sendTextDataToASpecifiedWindow=function(text) // send temporary message i guess
+//this method works, the other 3 methods of setting text are not finished.
+
+exports.sendTextDataToASpecifiedWindow=function(options) // send temporary message i guess
 {
+ options.text=options.text||"";
+ options.color=options.color||"r";
+ options.size=options.size||"3";
+ options.window=options.window||0;
+ options.align=options.align||'left';
+ options.speed=options.speed||76;
+ options.stay=options.stay||3;//seconds
+ options.effect=options.effect||specialEffectForTextAndPictureOrderdNames.indexOf("Continuous scroll to left")
+
  var data=                  // Send text data to a specified window：CC=0x02: 
                             // Data-Items	Value	Length(byte)	Description
   '\u0002'                  // CC      	    0x02	1	Description This is a text data packet
- +String.fromCharCode(1)    // Window No 0x00~0x07	1	The window sequence number, valid values 0 ~ 7.
- +String.fromCharCode(specialEffectForTextAndPictureOrderdNames.indexOf("Continuous scroll to left"))  // Mode	           1	1	Refer to Special effect for text and picture
- +Alignment.left            // Alignment	0～2    1	0: Left-aligned 
+ +String.fromCharCode(options.window)    // Window No 0x00~0x07	1	The window sequence number, valid values 0 ~ 7.
+ +String.fromCharCode(options.effect)  // Mode	           1	1	Refer to Special effect for text and picture
+ +Alignment[options.align]            // Alignment	0～2    1	0: Left-aligned 
                             //                           1: Horizontal center 
                             //                           2: Right-aligned
- +String.fromCharCode(100-76)   // Speed	  1～100    1	The smaller the value, the faster
- +String.fromCharCode(3>>8,3&0xff) // Stay time 0x0000~0xffff	2	High byte in the former. Unit: second.s
- +rich3('r','3',text)    // String	Variable-length	Every 3 bytes to represent a character. Refer to Rich3 text of Formatted text data format.
+ +String.fromCharCode(100-options.speed)   // Speed	  1～100    1	The smaller the value, the faster
+ +String.fromCharCode(options.stay>>8,options.stay&0xff) // Stay time 0x0000~0xffff	2	High byte in the former. Unit: second.s
+ +rich3(options.color,options.size,options.text)    // String	Variable-length	Every 3 bytes to represent a character. Refer to Rich3 text of Formatted text data format.
  
  return packetsend( packet.commandCode.subCommand, packet.packetData.lengthcode(data,0,0) );
 }
@@ -595,7 +605,7 @@ left:'\u0000'
 ,right:'\u0002'
 }
 
-var specialEffectForTextAndPictureOrderdNames=
+var specialEffectForTextAndPictureOrderdNames=exports.effect
 ["Draw" // 0
 ,"Open from left" // 1
 ,"Open from right" // 2
@@ -791,7 +801,7 @@ serialPort.list(function (err, ports)
   if(port.pnpId.indexOf('Prolific')!=-1||port.manufacturer.indexOf('Prolific')!=-1)
   {
    if(exports.serial) exports.serial.close();
-   myserial = new SerialPort(port.comName, { encoding:'binary',baudrate: 115200});
+   myserial = new SerialPort(port.comName, { baudrate: 115200});
    exports.serial=myserial;
    myserial.on('close', function(a){console.log('serial closed',a)})
    myserial.on('error', function(a){console.log('serial error',a)})
