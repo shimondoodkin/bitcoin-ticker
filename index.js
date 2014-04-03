@@ -152,7 +152,7 @@ run()
 cp=require('./cpower1200.js')
 settext=function(text1,text2)
 {
- cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:0,text:text1,effect:cp.effect.indexOf("Draw")}));
+ cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:0,text:text1,effect:cp.effect.indexOf("Draw"),align:'center'}));
  cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:1,text:text2}));
 }
 
