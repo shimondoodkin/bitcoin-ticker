@@ -1,3 +1,6 @@
+
+
+
 var d=new Date().toString();
 var http = require('http');
 var url = require('url');
@@ -144,7 +147,7 @@ var  repl = require("repl");repl.start({ useGlobal:true,  useColors:true, });// 
 
 function run()
 {
- update(function(){ledtext(ratestext());console.log('done');setTimeout(run,2000);});
+ update(function(){console.log('done');setTimeout(run,2000);});
 }
 run()
 
@@ -162,10 +165,10 @@ var n = this,
 
 var lastText = "";
 
-ratestext=function()
+pricestext=function()
 {
   var p=5;
-  var text1=''+(rates.bitpay.filter(function(a){return a.code=='ILS'})[0].rate/1000*1.05).formatMoney(p, '.', ',')+' ILS	 / mB'
+  var text1=''+(rates.bitpay.filter(function(a){return a.code=='ILS'})[0].rate/1000*1.05).formatMoney(p, '.', ',')+' ILS / mB'
 
   var p=2;
   var text2='Bits of Gold '+(rates.bitsofgold.sell/1000).formatMoney(p, '.', ',')+'   '+
@@ -175,12 +178,32 @@ ratestext=function()
            'Bitstamp '+(rates.bitstamp.ask*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'   '+
            'Btc-e '+(rates.btce.ticker.sell*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'   ' +
            'Bitpay '+(rates.bitpay.filter(function(a){return a.code=='ILS'})[0].rate/1000).formatMoney(p, '.', ',')+'   '
-/*
+
   var p=2;
   var text2='Bits of Gold '+(rates.bitsofgold.sell/1000).formatMoney(p, '.', ',')+'   '+
            'Bit2c '+(rates.bit2c.ll/1000).formatMoney(p, '.', ',')+'   '+
-           'Bit Go '+(rates.bitgo.currentSellingPrice/1000).formatMoney(p, '.', ',')+'   '
-*/
+           'Bit Go '+(rates.bitgo.currentSellingPrice/1000).formatMoney(p, '.', ',')+'   '+
+           'Bitcoin Average '+(rates.bitcoinaverageUSD.ask*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'   '+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+           'Bitstamp '+(rates.bitstamp.ask*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'   '+
+           'Btc-e '+(rates.btce.ticker.sell*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'   ' +
+
+
+           'Bitpay '+(rates.bitpay.filter(function(a){return a.code=='ILS'})[0].rate/1000).formatMoney(p, '.', ',')+'   '
+
 /*
   var p=5;
   var text2='Bits of Gold '+(rates.bitsofgold.sell/1000).formatMoney(p, '.', ',')+'   '+
@@ -195,23 +218,19 @@ ratestext=function()
  return {text1 :text1,text2:text2}
 }
 
+
+
 cp=require('./cpower1200.js')
-ledtext=function(options,cb)
+settext=function(text1,text2)
 {
- cp.serialstart(function(have)
- {
-  if(have)
-  {
-   if(options.text1)cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:0, text:options.text1, effect: cp.effect.indexOf('Draw') ,align:'center' }));
-   setTimeout(function()
-   {// let the reply from previous function come back, should take 17 ms transfer time + parsing time
-    if(options.text2)cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:1, text:options.text2 }));
-	setTimeout(function()
-	{// let the reply from previous function come back, should take 17 ms transfer time + parsing time
-     try{cp.close();}catch(e){console.log(e.stack)}
-	 if(cb)cb();
-	},100);
+ cp.serialstart(function(have){
+   if(have)
+   {
+   cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:0, text:text1, effect: cp.effect.indexOf('Draw') ,align:'center' }));
+   setTimeout(function(){// let the reply from previous function come back, should take 17 ms transfer time + parsing time
+    cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:1, text:text2 }));
    },100);
   }
  });
 }
+

@@ -806,8 +806,8 @@ serialPort.list(function (err, ports)
    if(exports.serial) exports.serial.close();
    myserial = new SerialPort(port.comName, { baudrate: 115200});
    exports.serial=myserial;
-   myserial.on('close', function(a){console.log('serial closed',a)})
-   myserial.on('error', function(a){console.log('serial error',a)})
+   myserial.on('close', function(a){console.log('serial closed',a); exports.serial=null; myserial=null; })
+   myserial.on('error', function(a){console.log('serial error',a); try{myserial.close();}catch(e){} exports.serial=null; myserial=null;})
    myserial.on("open", function ()
    {
     console.log('serial open');
