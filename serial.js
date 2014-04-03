@@ -42,12 +42,12 @@ String.prototype.b=function(){ return this.valueOf().split('').map(function(a){ 
 
 serialreceive=function(data)
 {
-    console.log('data received: ' + (data.toString().h()));
+    console.log('data received: ' + (data.toString('binary').h()));
 }
 
 serialwrite=function(data,cb)
 {
-    myserial.write(data, function(err, results)
+    serials[Object.keys(serials)[0]].write(new Buffer(data,'binary'), function(err, results)
     {
      if(err)console.log('err ' + err);
      console.log('wrote bytes' + results);
@@ -56,7 +56,7 @@ serialwrite=function(data,cb)
 
 var  repl = require("repl");repl.start({ useGlobal:true,  useColors:true, });
 
-return
+/*
 var com = require("serialport");
 var serialPort = new com.SerialPort("COM8", { baudrate: 9600, parser: com.parsers.readline('\r\n') });
 serialPort.on('open',function() { console.log('Port open'); });
@@ -66,3 +66,4 @@ serialPort.on('data', function(data) { console.log("data1",data); });
 var serialPort2 = new com.SerialPort("COM9", { baudrate: 9600, parser: com.parsers.readline('\r\n') });
 serialPort2.on('open2',function() { console.log('Port open2'); });
 serialPort2.on('data2', function(data) { console.log("data2",data); });
+*/
