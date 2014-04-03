@@ -429,14 +429,14 @@ var rich3=function(color,size,letters)
 
 exports.sendTextDataToASpecifiedWindow=function(options) // send temporary message i guess
 {
- options.text=options.text||"";
- options.color=options.color||"r";
- options.size=options.size||"3";
- options.window=options.window||0;
- options.align=options.align||'left';
- options.speed=options.speed||76;
- options.stay=options.stay||3;//seconds
- options.effect=options.effect||specialEffectForTextAndPictureOrderdNames.indexOf("Continuous scroll to left")
+ if( undefined===options.text)options.text="";
+ if( undefined===options.color)options.color="r";
+ if( undefined===options.size)options.size="3";
+ if( undefined===options.window)options.window=0;
+ if( undefined===options.align)options.align='left';
+ if( undefined===options.speed)options.speed=76;
+ if( undefined===options.stay)options.stay=3;//seconds
+ if( undefined===options.effect)options.effect=specialEffectForTextAndPictureOrderdNames.indexOf("Continuous scroll to left")
 
  var data=                  // Send text data to a specified window：CC=0x02: 
                             // Data-Items	Value	Length(byte)	Description
