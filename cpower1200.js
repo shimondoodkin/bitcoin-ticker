@@ -788,10 +788,12 @@ exports.queryFreeDiskSpace=function()
  return packetsend(packet.commandCode.queryFreeDiskSpace,data);
 }
 
-exports.serialstart=function()
+exports.serialstart=function(cb)
 {
 var serialPort = require((require('os').arch()=='arm'?'./arm_node_modules/':'')+"serialport");
 var SerialPort = serialPort.SerialPort
+var have=false;
+if(!cb)cb=function(have){console.log(have?'serial found':'serial not found');};
 
 serialPort.list(function (err, ports)
 {
@@ -800,6 +802,7 @@ serialPort.list(function (err, ports)
   console.log(port);
   if(port.pnpId.indexOf('Prolific')!=-1||port.manufacturer.indexOf('Prolific')!=-1)
   {
+   have=true
    if(exports.serial) exports.serial.close();
    myserial = new SerialPort(port.comName, { baudrate: 115200});
    exports.serial=myserial;
@@ -813,6 +816,7 @@ serialPort.list(function (err, ports)
      //console.log('arguments: ' ,arguments);
      serialreceive(data)
     });
+    cb(have);
     /*
     myserial.write("ls\n", function(err, results)
     {
@@ -823,6 +827,7 @@ serialPort.list(function (err, ports)
    });
   }
  });
+ if(!have)cb(have)
 });
 }
 

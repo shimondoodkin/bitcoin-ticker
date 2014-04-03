@@ -90,10 +90,10 @@ var font = new Font(name, file);
 }
 loadfonts(mctx);
 
-var index=fs.readFileSync(__dirname+'/index.html')
+var rateshtml=fs.readFileSync(__dirname+'/rates.html')
 http.createServer(function (req, res) {
   if(req.url=='/rates'){  res.writeHead(200, {'Content-Type': 'text/javascript'}); res.end(JSON.stringify(rates, null, 2));}
-  if(req.url=='/')     {  res.writeHead(200, {'Content-Type': 'text/html'}); res.end(index);}
+  if(req.url=='/')     {  res.writeHead(200, {'Content-Type': 'text/html'}); res.end(rateshtml);}
   if(req.url=='/image')     {
 
 mctx.antialias = 'none';
@@ -152,7 +152,11 @@ run()
 cp=require('./cpower1200.js')
 settext=function(text1,text2)
 {
- cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:0,text:text1,effect:cp.effect.indexOf("Draw"),align:'center'}));
- cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:1,text:text2}));
+ cp.serialstart(function(){
+   cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:0, text:text1, effect: cp.effect.indexOf('Draw') ,align:'center' }));
+  setTimeout(function(){// let the reply from previous function come back, should take 17 ms transfer time + parsing time
+   cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:1, text:text2 }));
+  },100);
+ });
 }
 
