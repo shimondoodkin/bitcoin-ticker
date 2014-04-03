@@ -1,6 +1,6 @@
 // /dev/serial/by-id/usb-Prolific_Technology_Inc._USB-Serial_Controller_D-if00-port0
 
-var serialPort = require("serialport");
+var serialPort = require((require('os').arch()=='arm'?'./arm_node_modules/':'')+"serialport");
 var SerialPort = serialPort.SerialPort
 serials={};
 serialPort.list(function (err, ports)

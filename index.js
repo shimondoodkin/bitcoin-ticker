@@ -59,7 +59,7 @@ if(c.code=='ILS'){d.push(c);prev_ils=i}
  )
 }
 
-var Canvas = require('canvas')
+var Canvas = require((require('os').arch()=='arm'?'./arm_node_modules/':'')+'canvas')
   , Font = Canvas.Font
   , mcanvas = new Canvas(20,20)
   , mctx = mcanvas.getContext('2d');
