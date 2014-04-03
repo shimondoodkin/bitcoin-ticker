@@ -165,13 +165,13 @@ var lastText = "";
 ratestext=function()
 {
   var p=5;
-  var text1=''+(rates.bitpay.filter(function(a){return a.code=='ILS'})[0].rate/1000*1.05).formatMoney(p, '.', ',')+' ILS	 / mB'
+  var text1=''+(rates.bitpay.filter(function(a){return a.code=='ILS'})[0].rate/1000*1.05).formatMoney(p, '.', ',')+' ILS/mB'
 
   var p=2;
   var text2='Bits of Gold '+(rates.bitsofgold.sell/1000).formatMoney(p, '.', ',')+'   '+
            'Bit2c '+(rates.bit2c.ll/1000).formatMoney(p, '.', ',')+'   '+
-           'Bit Go '+(rates.bitgo.currentSellingPrice/1000).formatMoney(p, '.', ',')+'   '+
-           'Bitcoin Average '+(rates.bitcoinaverageUSD.ask*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'   '+
+           'BitGo '+(rates.bitgo.currentSellingPrice/1000).formatMoney(p, '.', ',')+'   '+
+           'BitcoinAverage '+(rates.bitcoinaverageUSD.ask*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'   '+
            'Bitstamp '+(rates.bitstamp.ask*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'   '+
            'Btc-e '+(rates.btce.ticker.sell*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'   ' +
            'Bitpay '+(rates.bitpay.filter(function(a){return a.code=='ILS'})[0].rate/1000).formatMoney(p, '.', ',')+'   '
@@ -208,7 +208,7 @@ ledtext=function(options,cb)
     if(options.text2)cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:1, text:options.text2 }));
 	setTimeout(function()
 	{// let the reply from previous function come back, should take 17 ms transfer time + parsing time
-     try{cp.close();}catch(e){console.log(e.stack)}
+     try{cp.serial.close();}catch(e){console.log(e.stack)}
 	 if(cb)cb();
 	},100);
    },100);
