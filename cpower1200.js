@@ -875,7 +875,12 @@ exports.serialwrite=function(data,cb)
 {
     myserial.write(new Buffer(data,'binary'), function(err, results)
     {
-     console.log('err ' + err, 'bytes wrote: ' + results);
+     if(err)console.log('err ', err.stack);
+      console.log('serial bytes to write: ' + results);
+     myserial.drain(function(){
+      console.log('serial drained - bytes wrote');
+       if(cb)cb();
+     })
     });
 }
 

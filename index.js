@@ -201,19 +201,38 @@ ledtext=function(options,cb)
  {
   if(have)
   {
-   if(options.text1&&prevtext.text1!=options.text1)cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:0, text:options.text1, effect: cp.effect.indexOf('Draw') ,align:'center' }));
-   prevtext.text1=options.text1
-   setTimeout(function()
-   {// let the reply from previous function come back, should take 17 ms transfer time + parsing time
-    if(options.text2&&prevtext.text2!=options.text2)cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:1, text:options.text2 }));
+
+   function t1(cb)
+   {
+    if(options.text1&&prevtext.text1!=options.text1)
+    {
+     cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:0, text:options.text1, effect: cp.effect.indexOf('Draw') ,align:'center' }),cb);
+     prevtext.text1=options.text1
+    }
+    else cb();
+   }
+
+   function t2(cb)
+   {
+    if(options.text2&&prevtext.text2!=options.text2)
+    {
+     cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:1, text:options.text2 }));
 	prevtext.text2=options.text2
-	setTimeout(function()
-	{// let the reply from previous function come back, should take 17 ms transfer time + parsing time
-     //try{cp.serial.close();}catch(e){console.log(e.stack)}
-	 if(cb)cb();
-	},100);
-   },100);
-  }
-  
+    }
+    else cb();
+   }
+
+   t1(function(){
+
+    t2(function(){
+
+      cp.serial.close();
+      if(cb)cb();
+
+    });
+
+   });
+
+  }  
  });
 }
