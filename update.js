@@ -170,6 +170,31 @@ killmyapp=function(cb)// this function should be tested
  });
 }
 
+myappexists=function(cb)// this function should be tested
+{
+ var exec = require('child_process').exec,
+    child;
+
+ // when you run your aplication add a dummy argument that identifies your application.
+
+ child = exec('ps aux | grep mynodeapp',
+  function (error, stdout, stderr) {
+
+    //console.log('stdout: ' + stdout);
+    //console.log('stderr: ' + stderr);
+     var lines=stdout.trim().split('\n') //split by lines
+     var linesfiltered=lines.filter(function(a){return a.indexOf('grep')==-1})// remove myself
+     var cols=linesfiltered.map(function(a){return a.split(/\s\s+/)})//split by cols
+     var onlyids=cols.map(function(a){return a[1]})
+    
+     cb(onlyids.length>0);
+
+    if (error !== null) {
+      console.log('exec error: ' + error);
+    }
+ });
+}
+
 runmyapp=function(cb)
 {
  var cp = require('child_process');
@@ -199,6 +224,14 @@ getlastcommit(function(data){
         })
       });
     }
+	else
+	 myappexists(function(running){
+	     if(!running)
+	      runmyapp(function(){
+            console.log("run done");
+            process.exit(0)
+          });
+	 })
   });
 });
 
