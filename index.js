@@ -232,6 +232,6 @@ var  repl = require("repl");repl.start({ useGlobal:true,  useColors:true, });// 
 
 function run()
 {
- update(function(){ledtext(ratestext());console.log('done');setTimeout(run,60000);});
+ update(function(){ledtext(ratestext());console.log('done');setTimeout(run,30000);});
 }
 run()
