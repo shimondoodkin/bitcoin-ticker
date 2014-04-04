@@ -806,9 +806,10 @@ serialPort.list(function (err, ports)
    have=true
    if(exports.serial) exports.serial.close();
    myserial = new SerialPort(port.comName, { baudrate: 115200
-   ,disconnectedCallback:function(){console.log('disconnected')}
+   ,disconnectedCallback:function(){console.log('serial disconnected')}
    });
    exports.serial=myserial;
+   myserial.pnpId=port.pnpId;
    myserial.on('close', function(a){ try{ console.log('serial closed',a); exports.serial=null; myserial=null; }catch(err){ if(err)console.log('err ', err.stack);} })
    myserial.on('error', function(a){ try{ console.log('serial error',a.stack); myserial.close(); exports.serial=null; myserial=null; }catch(err){ if(err)console.log('err ', err.stack);} })
    myserial.on("open", function ()
