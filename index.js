@@ -221,7 +221,7 @@ ledtext=function(options,cb)
 
     t2(function(){
 
-      cp.serial.close();
+      //if(cp.serial)cp.serial.close();
       if(cb)cb();
 
     });
