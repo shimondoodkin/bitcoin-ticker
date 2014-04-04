@@ -882,7 +882,7 @@ var fs=require('fs');
 exports.serialwrite=function(data,cb)
 {
  try{
-   if(require('os').arch()=='arm'&& !fs.existsSync('/dev/serial/by-id/'+myserial.pnpId))
+   if(myserial&&require('os').arch()=='arm'&& !fs.existsSync('/dev/serial/by-id/'+myserial.pnpId))
    {
     console.log('serial not connected in arm\n'+'/dev/serial/by-id/'+myserial.pnpId)
     myserial=null;
@@ -901,7 +901,7 @@ exports.serialwrite=function(data,cb)
     });
    }
    
-   if(!exports.serial)serialstart(function(have){ if(!have){ if(cb) return cb(); else return;}
+   if(!myserial)serialstart(function(have){ if(!have){ if(cb) return cb(); else return;}
     dowrite();
    });
    else
