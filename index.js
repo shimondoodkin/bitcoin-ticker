@@ -159,13 +159,14 @@ ratestext=function()
   var text1=''+(rates.bitpay.filter(function(a){return a.code=='ILS'})[0].rate/1000*1.05).formatMoney(p, '.', ',')+' ILS/mB'
 
   var p=2;
-  var text2='Bits of Gold '+(rates.bitsofgold.sell/1000).formatMoney(p, '.', ',')+'  '+
-           'Bit2c '+(rates.bit2c.ll/1000).formatMoney(p, '.', ',')+'  '+
-           'BitGo '+(rates.bitgo.currentSellingPrice/1000).formatMoney(p, '.', ',')+'  '+
-           'BitcoinAverage '+(rates.bitcoinaverageUSD.ask*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'  '+
-           'Bitstamp '+(rates.bitstamp.ask*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'  '+
-           'Btc-e '+(rates.btce.ticker.sell*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'  ' +
-           'Bitpay '+(rates.bitpay.filter(function(a){return a.code=='ILS'})[0].rate/1000).formatMoney(p, '.', ',')+'  '
+  var text2=''
+  if(rates.bitsofgold.sell) text2+=     'Bits of Gold '+(rates.bitsofgold.sell/1000).formatMoney(p, '.', ',')+'  '
+  if(rates.bit2c.ll) text2+=     'Bit2c '+(rates.bit2c.ll/1000).formatMoney(p, '.', ',')+'  '
+  if(rates.bitgo.currentSellingPrice) text2+=     'BitGo '+(rates.bitgo.currentSellingPrice/1000).formatMoney(p, '.', ',')+'  '
+  if(rates.bitcoinaverageUSD.ask) text2+=     'BitcoinAverage '+(rates.bitcoinaverageUSD.ask*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'  '
+  if(rates.bitstamp.ask) text2+=     'Bitstamp '+(rates.bitstamp.ask*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'  '
+  if(rates.btce.ticker.sell) text2+=     'Btc-e '+(rates.btce.ticker.sell*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'  ' 
+  if(rates.bitpay.filter(function(a){return a.code=='ILS'})[0].rate) text2+=     'Bitpay '+(rates.bitpay.filter(function(a){return a.code=='ILS'})[0].rate/1000).formatMoney(p, '.', ',')+'  '
 /*
   var p=2;
   var text2='Bits of Gold '+(rates.bitsofgold.sell/1000).formatMoney(p, '.', ',')+'   '+
