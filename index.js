@@ -209,7 +209,7 @@ ledtext=function(options,cb)
 	prevtext.text2=options.text2
 	setTimeout(function()
 	{// let the reply from previous function come back, should take 17 ms transfer time + parsing time
-     try{cp.serial.close();}catch(e){console.log(e.stack)}
+     //try{cp.serial.close();}catch(e){console.log(e.stack)}
 	 if(cb)cb();
 	},100);
    },100);
