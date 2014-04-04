@@ -157,7 +157,7 @@ ratestext=function()
 {
   var p=3;
   var text1=''+(rates.bitpay.filter(function(a){return a.code=='ILS'})[0].rate/1000*1.05).formatMoney(p, '.', ',')+' ILS/mB'
-
+  
   var p=2;
   var text2=''
   if(rates.bitsofgold.sell) text2+=     'Bits of Gold '+(rates.bitsofgold.sell/1000).formatMoney(p, '.', ',')+'  '
@@ -184,7 +184,9 @@ ratestext=function()
            'Btc-e '+(rates.btce.ticker.sell/1000).formatMoney(p, '.', ',')+' USD='+(rates.btce.ticker.sell*rates.dollar[1]/1000).formatMoney(p, '.', ',')+' ILS  ' +
            'Bitpay '+(rates.bitpay.filter(function(a){return a.code=='USD'})[0].rate/1000).formatMoney(p, '.', ',')+' USD='+(rates.bitpay.filter(function(a){return a.code=='ILS'})[0].rate/1000).formatMoney(p, '.', ',')+' ILS  '
 */
- return {text1 :text1,text2:text2}
+var r={text1 :text1,text2:text2}
+ console.log(r)
+ return r;
 }
 
 cp=require('./cpower1200.js')
