@@ -4,7 +4,7 @@ var serialPort = require((require('os').arch()=='arm'?'./arm_node_modules/':'')+
 var SerialPort = serialPort.SerialPort
 serials={};
 
-function serialstat()
+serialstart=function ()
 {
 serialPort.list(function (err, ports)
 {
@@ -38,7 +38,7 @@ serialPort.list(function (err, ports)
  });
 });
 }
-serialstat()
+
 String.prototype.h=function(){ return this.valueOf().split('').map(function(a){ var x= a.charCodeAt(0); return (x<16?'0':'')+x.toString(16)}).join(' ').toUpperCase() }
 String.prototype.b=function(){ return this.valueOf().split('').map(function(a){ var x= a.charCodeAt(0); return ('00000000'.substring(x.toString(2).length))+x.toString(2)}).join(' ') }
 
@@ -54,7 +54,7 @@ serialwrite=function(data,cb)
 	var myserial=serials[Object.keys(serials)[0]];  
     myserial.write(new Buffer(data,'binary'), function(err, results)
     {
-     if(err)console.log('err ' + err);
+     if(err)console.log('err ' , err.stack);
      console.log('wrote bytes' + results);
 	 myserial.drain(function(){
 	  if(cb)cb();
@@ -64,7 +64,7 @@ serialwrite=function(data,cb)
    catch (e)
    {
     // Error means port is not available for listening.
-    active = false;
+	 console.log(e.stack)
    }
 }
 
