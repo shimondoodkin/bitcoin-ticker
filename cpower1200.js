@@ -895,15 +895,18 @@ exports.serialwrite=function(data,cb)
     {
      if(err)console.log('err ', err.stack);
       console.log('serial bytes to write: ' + results);
-     myserial.drain(function(){
-      console.log('serial drained - bytes wrote');
-	  if(results===undefined)
-	  {exports.serial.close();
-	  myserial=null;
-	exports.serial=null;
-	}
+     if(myserial)
+	  myserial.drain(function()
+	  {
+       console.log('serial drained - bytes wrote');
+	   if(results===undefined)
+	   {
+	    exports.serial.close();
+	    myserial=null;
+	    exports.serial=null;
+	   }
        if(cb)cb();
-     })
+      });
     });
    }
    
