@@ -140,14 +140,6 @@ gif.finish();
 }).listen(3333);
 
 console.log('Server running at http://127.0.0.1:3333/');
-var  repl = require("repl");repl.start({ useGlobal:true,  useColors:true, });// uncomment to test
-
-
-function run()
-{
- update(function(){ledtext(ratestext());console.log('done');setTimeout(run,2000);});
-}
-run()
 
 
 Number.prototype.formatMoney = function(c, d, t){
@@ -232,3 +224,13 @@ try{
    
  }catch(err){ if(err)console.log('err ', err.stack);}
 }
+
+
+var  repl = require("repl");repl.start({ useGlobal:true,  useColors:true, });// uncomment to test
+
+
+function run()
+{
+ update(function(){ledtext(ratestext());console.log('done');setTimeout(run,60000);});
+}
+run()
