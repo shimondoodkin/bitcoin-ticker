@@ -804,13 +804,17 @@ serialPort.list(function (err, ports)
   {
    have=true
    if(exports.serial) exports.serial.close();
-   myserial = new SerialPort(port.comName, { baudrate: 115200});
+   myserial = new SerialPort(port.comName, { baudrate: 115200
+   ,disconnectedCallback:function(){console.log('disconnected')}
+   });
    exports.serial=myserial;
-   myserial.on('close', function(a){console.log('serial closed',a); exports.serial=null; myserial=null; })
-   myserial.on('error', function(a){console.log('serial error',a.stack); try{myserial.close();}catch(e){} exports.serial=null; myserial=null;})
+   myserial.on('close', function(a){ try{ console.log('serial closed',a); exports.serial=null; myserial=null; }catch(err){ if(err)console.log('err ', err.stack);} })
+   myserial.on('error', function(a){ try{ console.log('serial error',a.stack); myserial.close(); exports.serial=null; myserial=null; }catch(err){ if(err)console.log('err ', err.stack);} })
    myserial.on("open", function ()
    {
-    console.log('serial open');
+    try{
+    console.log('serial open');cb(false);
+	if(!myserial)return 
     myserial.on('data', function(data)
     {
      //console.log('arguments: ' ,arguments);
@@ -824,6 +828,7 @@ serialPort.list(function (err, ports)
      console.log('results ' + results);
     });
     */
+	}catch(err){ if(err)console.log('err ', err.stack);}
    });
   }
  });
@@ -873,6 +878,7 @@ var receivecmd=function(buf)
 
 exports.serialwrite=function(data,cb)
 {
+   try{
     myserial.write(new Buffer(data,'binary'), function(err, results)
     {
      if(err)console.log('err ', err.stack);
@@ -882,6 +888,7 @@ exports.serialwrite=function(data,cb)
        if(cb)cb();
      })
     });
+	}catch(err){ if(err)console.log('err ', err.stack);}
 }
 
 ////////////////////////////

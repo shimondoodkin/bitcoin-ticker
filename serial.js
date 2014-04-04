@@ -3,7 +3,7 @@
 var serialPort = require((require('os').arch()=='arm'?'./arm_node_modules/':'')+"serialport");
 var SerialPort = serialPort.SerialPort
 serials={};
-var active = false;
+
 function serialstat()
 {
 serialPort.list(function (err, ports)
@@ -13,14 +13,13 @@ serialPort.list(function (err, ports)
   console.log(port);
   if(port.pnpId.indexOf('Prolific')!=-1||port.manufacturer.indexOf('Prolific')!=-1)
   {
-   var myserial = new SerialPort(port.comName, { baudrate: 115200});
+   var myserial = new SerialPort(port.comName, { baudrate: 115200,disconnectedCallback:function(){console.log('disconnected')}});
    serials[port.comName.replace(/\//g,'')]=myserial;
-   myserial.on('close', function(a){console.log('serial closed',a,myserial.path); active = false; })
+   myserial.on('close', function(a){console.log('serial closed',a,myserial.path);  })
 
-   myserial.on('error', function(a){console.log('serial error',a,myserial.path);active = false;})
+   myserial.on('error', function(a){console.log('serial error',a,myserial.path);})
    myserial.on("open", function ()
    {
-    active = true;
     console.log('serial open',myserial.path);
     myserial.on('data', function(data)
     {
@@ -51,8 +50,6 @@ serialreceive=function(data)
 
 serialwrite=function(data,cb)
 {
-  if (active)
-  {
    try {
 	var myserial=serials[Object.keys(serials)[0]];  
     myserial.write(new Buffer(data,'binary'), function(err, results)
@@ -69,7 +66,6 @@ serialwrite=function(data,cb)
     // Error means port is not available for listening.
     active = false;
    }
- }
 }
 
 var  repl = require("repl");repl.start({ useGlobal:true,  useColors:true, });
