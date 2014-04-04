@@ -155,7 +155,7 @@ var n = this,
 
 ratestext=function()
 {
-  var p=5;
+  var p=3;
   var text1=''+(rates.bitpay.filter(function(a){return a.code=='ILS'})[0].rate/1000*1.05).formatMoney(p, '.', ',')+' ILS/mB'
 
   var p=2;
