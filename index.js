@@ -160,21 +160,19 @@ var n = this,
    return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
  };
 
-var lastText = "";
-
 ratestext=function()
 {
   var p=5;
   var text1=''+(rates.bitpay.filter(function(a){return a.code=='ILS'})[0].rate/1000*1.05).formatMoney(p, '.', ',')+' ILS/mB'
 
   var p=2;
-  var text2='Bits of Gold '+(rates.bitsofgold.sell/1000).formatMoney(p, '.', ',')+'   '+
-           'Bit2c '+(rates.bit2c.ll/1000).formatMoney(p, '.', ',')+'   '+
-           'BitGo '+(rates.bitgo.currentSellingPrice/1000).formatMoney(p, '.', ',')+'   '+
-           'BitcoinAverage '+(rates.bitcoinaverageUSD.ask*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'   '+
-           'Bitstamp '+(rates.bitstamp.ask*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'   '+
-           'Btc-e '+(rates.btce.ticker.sell*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'   ' +
-           'Bitpay '+(rates.bitpay.filter(function(a){return a.code=='ILS'})[0].rate/1000).formatMoney(p, '.', ',')+'   '
+  var text2='Bits of Gold '+(rates.bitsofgold.sell/1000).formatMoney(p, '.', ',')+'  '+
+           'Bit2c '+(rates.bit2c.ll/1000).formatMoney(p, '.', ',')+'  '+
+           'BitGo '+(rates.bitgo.currentSellingPrice/1000).formatMoney(p, '.', ',')+'  '+
+           'BitcoinAverage '+(rates.bitcoinaverageUSD.ask*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'  '+
+           'Bitstamp '+(rates.bitstamp.ask*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'  '+
+           'Btc-e '+(rates.btce.ticker.sell*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'  ' +
+           'Bitpay '+(rates.bitpay.filter(function(a){return a.code=='ILS'})[0].rate/1000).formatMoney(p, '.', ',')+'  '
 /*
   var p=2;
   var text2='Bits of Gold '+(rates.bitsofgold.sell/1000).formatMoney(p, '.', ',')+'   '+
@@ -196,16 +194,19 @@ ratestext=function()
 }
 
 cp=require('./cpower1200.js')
+var prevtext={text1:'',text2:''};
 ledtext=function(options,cb)
 {
  cp.serialstart(function(have)
  {
   if(have)
   {
-   if(options.text1)cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:0, text:options.text1, effect: cp.effect.indexOf('Draw') ,align:'center' }));
+   if(options.text1&&prevtext.text1!=options.text1)cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:0, text:options.text1, effect: cp.effect.indexOf('Draw') ,align:'center' }));
+   prevtext.text1=options.text1
    setTimeout(function()
    {// let the reply from previous function come back, should take 17 ms transfer time + parsing time
-    if(options.text2)cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:1, text:options.text2 }));
+    if(options.text2&&prevtext.text2!=options.text2)cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:1, text:options.text2 }));
+	prevtext.text2=options.text2
 	setTimeout(function()
 	{// let the reply from previous function come back, should take 17 ms transfer time + parsing time
      try{cp.serial.close();}catch(e){console.log(e.stack)}
@@ -213,5 +214,6 @@ ledtext=function(options,cb)
 	},100);
    },100);
   }
+  
  });
 }
