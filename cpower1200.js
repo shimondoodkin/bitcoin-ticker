@@ -1,4 +1,4 @@
-
+//0 0 * * * /sbin/shutdown -r now
 /*
 Data	Value	Length(Byte)	Description
 Start code	0xa5	1	The start of a packet
@@ -17,6 +17,7 @@ Packet data checksum
 End code	0xae	1	The end of a packet（Package tail）
 
 */
+
 packet={
   start:'\u00a5'
  ,packetType: {
@@ -788,7 +789,7 @@ exports.queryFreeDiskSpace=function()
  return packetsend(packet.commandCode.queryFreeDiskSpace,data);
 }
 
-exports.serialstart=function(cb)
+var serialstart=exports.serialstart=function(cb)
 {
 var serialPort = require((require('os').arch()=='arm'?'./arm_node_modules/':'')+"serialport");
 var SerialPort = serialPort.SerialPort
@@ -876,9 +877,18 @@ var receivecmd=function(buf)
  console.log('cmd parsed: ',ret);
 };
 
+var fs=require('fs');
 exports.serialwrite=function(data,cb)
 {
-   try{
+ try{
+   if(require('os').arch()=='arm'&& !fs.existsSync('/dev/serial/by-id/'+myserial.pnpId))
+   {
+    console.log('serial not connected in arm')
+    myserial=null;
+	exports.serial=null;
+   }
+   if(!exports.serial)serialstart(function(have){ if(!have){ if(cb) return cb(); else return;}
+   
     myserial.write(new Buffer(data,'binary'), function(err, results)
     {
      if(err)console.log('err ', err.stack);
@@ -888,7 +898,11 @@ exports.serialwrite=function(data,cb)
        if(cb)cb();
      })
     });
-	}catch(err){ if(err)console.log('err ', err.stack);}
+   
+   });
+   
+   
+ }catch(err){ if(err)console.log('err ', err.stack);}
 }
 
 ////////////////////////////
@@ -896,3 +910,4 @@ exports.serialwrite=function(data,cb)
 
  //serialwrite(queryVersionInfo())
 //console.log(packet.packetData.unlengthcode(packet.packetData.lengthcode('test')));
+
