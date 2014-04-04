@@ -896,6 +896,11 @@ exports.serialwrite=function(data,cb)
       console.log('serial bytes to write: ' + results);
      myserial.drain(function(){
       console.log('serial drained - bytes wrote');
+	  if(results===undefined)
+	  {exports.serial.close();
+	  myserial=null;
+	exports.serial=null;
+	}
        if(cb)cb();
      })
     });
@@ -916,3 +921,4 @@ exports.serialwrite=function(data,cb)
  //serialwrite(queryVersionInfo())
 //console.log(packet.packetData.unlengthcode(packet.packetData.lengthcode('test')));
 
+//Error Input/output error calling write(...)
