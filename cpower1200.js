@@ -888,8 +888,8 @@ exports.serialwrite=function(data,cb)
     myserial=null;
 	exports.serial=null;
    }
-   if(!exports.serial)serialstart(function(have){ if(!have){ if(cb) return cb(); else return;}
    
+   function dowrite(){
     myserial.write(new Buffer(data,'binary'), function(err, results)
     {
      if(err)console.log('err ', err.stack);
@@ -899,9 +899,13 @@ exports.serialwrite=function(data,cb)
        if(cb)cb();
      })
     });
+   }
    
+   if(!exports.serial)serialstart(function(have){ if(!have){ if(cb) return cb(); else return;}
+    dowrite();
    });
-   
+   else
+   dowrite();
    
  }catch(err){ if(err)console.log('err ', err.stack);}
 }

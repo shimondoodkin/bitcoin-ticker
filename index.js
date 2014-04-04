@@ -197,11 +197,6 @@ cp=require('./cpower1200.js')
 var prevtext={text1:'',text2:''};
 ledtext=function(options,cb)
 {
- cp.serialstart(function(have)
- {
-  if(have)
-  {
-
    function t1(cb)
    {
     if(options.text1&&prevtext.text1!=options.text1)
@@ -232,7 +227,4 @@ ledtext=function(options,cb)
     });
 
    });
-
-  }  
- });
 }
