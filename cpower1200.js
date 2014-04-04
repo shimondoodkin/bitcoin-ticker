@@ -812,7 +812,7 @@ serialPort.list(function (err, ports)
    myserial.pnpId=port.pnpId;
    var trycloseonce=true;
    myserial.on('close', function(a){ try{ console.log('serial closed',a); exports.serial=null; myserial=null; }catch(err){ if(err)console.log('err ', err.stack);} })
-   myserial.on('error', function(a){ try{ console.log('serial error',a.stack);  if(trycloseonce)myserial.close(); trycloseonce=false ; exports.serial=null; myserial=null; }catch(err){ if(err)console.log('err ', err.stack);} })
+   myserial.on('error', function(a){ try{ console.log('serial error',a.stack); exports.serial=null; myserial=null; }catch(err){ if(err)console.log('err ', err.stack);} })
    myserial.on("open", function ()
    {
     try{
