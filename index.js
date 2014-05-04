@@ -187,9 +187,9 @@ var n = this,
 
 ratestext=function()
 {
-  var p=2;
+  var p=3;
   var text1='Bitcoin'
-  if(rates.bitcoinaverageUSD.ask) text1='BTC/USD '+(rates.bitcoinaverageUSD.ask).formatMoney(p, '.', ',')+'  '
+  if(rates.bitcoinaverageUSD.ask) text1='mBTC/ILS '+((rates.bitcoinaverageUSD.ask*rates.dollar[1])/1000).formatMoney(p, '.', ',')+'  '
   
   var p=3;
   var text2=''
@@ -242,7 +242,7 @@ try{
     if(options.text2&&prevtext.text2!=options.text2)
     {
      cp.serialwrite(cp.sendTextDataToASpecifiedWindow({window:1, text:options.text2 }));
-	prevtext.text2=options.text2
+  prevtext.text2=options.text2
     }
     else cb();
    }
