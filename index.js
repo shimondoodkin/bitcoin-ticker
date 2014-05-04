@@ -189,12 +189,12 @@ ratestext=function()
 {
   var p=3;
   var text1='Bitcoin'
-  if(rates.bitcoinaverageUSD.ask) text1='mBTC/ILS - '+((rates.bitcoinaverageUSD.ask*rates.dollar[1])/1000).formatMoney(p, '.', ',')+'  '
+  if(rates.bitcoinaverageUSD.ask) text1=' mBTC/ILS '+((rates.bitcoinaverageUSD.ask*rates.dollar[1])/1000).formatMoney(p, '.', ',')+'  '
   
   var p=3;
   var text2=''
-  if(rates.bitsofgold.sell) text2+=     'Bits of Gold '+(rates.bitsofgold.sell/1000).formatMoney(p, '.', ',')+'  '
-  if(rates.bit2c.ll) text2+=     'Bit2c '+(rates.bit2c.ll/1000).formatMoney(p, '.', ',')+'  '
+  if(rates.bitsofgold.sell) text2+=     'Bits of Gold '+(rates.bitsofgold.buy/1000).formatMoney(p, '.', ',')+'  '
+  if(rates.bit2c.ll) text2+=     'Bit2c '+(rates.bit2c.h/1000).formatMoney(p, '.', ',')+'  '
 //  if(rates.bitgo.currentSellingPrice) text2+=     'BitGo '+(rates.bitgo.currentSellingPrice/1000).formatMoney(p, '.', ',')+'  '
 //  if(rates.bitcoinaverageUSD.ask) text2+=     'BitcoinAverage '+(rates.bitcoinaverageUSD.ask*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'  '
 //  if(rates.bitstamp.ask) text2+=     'Bitstamp '+(rates.bitstamp.ask*rates.dollar[1]/1000).formatMoney(p, '.', ',')+'  '
