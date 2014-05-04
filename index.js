@@ -92,11 +92,17 @@ var namea=a.toLowerCase().split('.');
 var name=namea[0]
 if(namea[namea.length-1]=='ttf')
 {
+ console.log(" add font '"+name+"'")
+
 var font = new Font(name, file);
   //font.addFace(fontFile('PfennigBold.ttf'),   'bold');
   //font.addFace(fontFile('PfennigItalic.ttf'), 'normal', 'italic');
   //font.addFace(fontFile('PfennigBoldItalic.ttf'), 'bold', 'italic');
  fontarr.push(font);
+}
+else
+{
+  console.log(" not add font '"+file+"'")
 }
 });}
  if(ctx)
@@ -107,18 +113,24 @@ var font = new Font(name, file);
 }
 loadfonts(mctx);
 
+var fliphebrew=require('./fliphebrew.js')
+
+var parseurl=require('url').parse
 var rateshtml=fs.readFileSync(__dirname+'/rates.html')
 http.createServer(function (req, res) {
   if(req.url=='/rates'){  res.writeHead(200, {'Content-Type': 'text/javascript'}); res.end(JSON.stringify(rates, null, 2));}
   if(req.url=='/')     {  res.writeHead(200, {'Content-Type': 'text/html'}); res.end(rateshtml);}
-  if(req.url=='/image')     {
-
+  if(req.url.substring(0,'/image'.length)=='/image')     {
+var purl=parseurl(req.url,true)
+var text=fliphebrew(purl.query.text)||'bitcoin!';
 mctx.antialias = 'none';
-mctx.font = '14px Impact';
-var te = mctx.measureText('Awesome!');
+var font=purl.query.font||'14px Impact';
+mctx.font = font;
+var te = mctx.measureText(text);
 te.height=
  te.emHeightAscent//: 8,
-+te.emHeightDescent;//: 2,
++te.emHeightDescent//: 2,
+-1;// for 16 size
 
 te.top=
  te.emHeightAscent //: 8
@@ -126,10 +138,14 @@ te.top=
 
 var canvas = new Canvas(te.width,te.height)
   , ctx = canvas.getContext('2d');
+  loadfonts(ctx);
 
+  ctx.fillStyle="#FFFFFF";
+  ctx.fillRect(0,0,te.width,te.height);
   ctx.antialias = 'none';
-  ctx.font = '14px Impact';
-  ctx.fillText("Awesome!", te.actualBoundingBoxLeft,te.emHeightAscent);
+  ctx.font = font;
+  ctx.fillStyle="#000000";
+  ctx.fillText(text, te.actualBoundingBoxLeft,te.emHeightAscent);
   res.writeHead(200, {'Content-Type': 'image/gif'}); 
 
 //var stream = canvas.createPNGStream();
