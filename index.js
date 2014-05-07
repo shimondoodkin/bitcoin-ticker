@@ -76,7 +76,7 @@ update=function(cb)
  )//parallel
 }
 
-var Canvas = require((require('os').arch()=='arm'?'./arm_node_modules/':'')+'canvas')
+var Canvas = require((require('os').arch()=='arm'?'./arm_node_modules/':(process.platform=='win32'?'./win_node_modules/':''))+'canvas')
   , Font = Canvas.Font
   , mcanvas = new Canvas(20,20)
   , mctx = mcanvas.getContext('2d');
@@ -85,7 +85,7 @@ var GifEncoder = require('gif-encoder');
 var fontarr=false;
 function loadfonts(ctx)
 {
- if (!Font) throw new Error('Need to compile with font support');
+ if (!Font) { console.log('unable to load fonts from files. you will need to use windows font names'); return;}
  if(fontarr===false){ fontarr=[];fs.readdirSync(__dirname+'/fonts').forEach(function(a){
 var file= __dirname+'/fonts/'+a;
 var namea=a.toLowerCase().split('.');

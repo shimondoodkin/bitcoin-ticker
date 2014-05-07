@@ -791,7 +791,7 @@ exports.queryFreeDiskSpace=function()
 
 var serialstart=exports.serialstart=function(cb)
 {
-var serialPort = require((require('os').arch()=='arm'?'./arm_node_modules/':'')+"serialport");
+var serialPort = require((require('os').arch()=='arm'?'./arm_node_modules/':(process.platform=='win32'?'./win_node_modules/':''))+"serialport");
 var SerialPort = serialPort.SerialPort
 var have=false;
 if(!cb)cb=function(have){console.log(have?'serial found':'serial not found');};
