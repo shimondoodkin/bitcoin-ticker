@@ -158,7 +158,7 @@ killmyapp=function(cb)// this function should be tested
      var i=0,l=onlyids.length;
      function loop(){ // simple async loop
       console.log('killing: ',linesfiltered[i])
-      process.kill(onlyids[i], 'SIGTERM');
+        try{process.kill(onlyids[i], 'SIGTERM');} catch(e){}
       i++; 
       if(i<l) {setTimeout(loop,500); } else cb();
      }
