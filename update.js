@@ -42,8 +42,8 @@ var req = https.request(options, function(res) {
     data+=d;
   });
   res.on('end', function() {
-   if(res.statusCode!=200) return;
-  /*  
+   if(res.statusCode!=200) return cb(false);
+   /*  
   [{"sha": "ef4ed7ae7f442fc83e76931a11bfbc551ec5afe1"
     "commit": {
       "author": {
@@ -210,8 +210,12 @@ runmyapp=function(cb)
 getlastcommit(function(data){
   getgitheadhash(function(hash)
   {
-    console.log("local hash: '"+hash+"'"," remote hash:'"+data[0].sha+"'");
-    if(hash!=data[0].sha)
+    if(data!==false)
+     console.log("local hash: '"+hash+"'"," remote hash:'"+data[0].sha+"'");
+    else
+     console.log("no hash returned, not http 200 result");
+	 
+	if(data!==false&&hash!=data[0].sha)
     {
       console.log("will update");
       updategit(function(){
@@ -227,14 +231,16 @@ getlastcommit(function(data){
 	else
 	 myappexists(function(running){
 	     if(!running)
+		 {
+          console.log("will run");
 	      runmyapp(function(){
             console.log("run done");
             process.exit(0)
           });
+		  }
 	 })
   });
 });
 
 
 //var  repl = require("repl");repl.start({ useGlobal:true,  useColors:true, });// uncomment to test
-
