@@ -16,7 +16,7 @@ process.on('uncaughtException', function(err) {
 });
 
 rates={
- dollar:["USDILS=X",0,"1/1/2000","0:00pm"],
+ dollar: 3.5 ,// ["USDILS=X",0,"1/1/2000","0:00pm"],
  euro:["EURILS=X",0,"1/1/2000","0:00pm"],
  bitsofgold: {buy:0,sell:0},
  bit2c: {"h":0,"l":0,"ll":0,"a":0,"av":0},
@@ -191,7 +191,7 @@ ratestext=function()
 {
   var p=3;
   var text1='Bitcoin'
-  if(rates.bitcoinaverageUSD.ask) text1='mBTC/ILS '+((rates.bitcoinaverageUSD.ask*rates.dollar)/1000).formatMoney(p, '.', ',')+'  '
+  if(rates.bitcoinaverageUSD.ask) text1='mBTC/ILS '+((rates.bitcoinaverageUSD.ask*rates.dollar)/1000).formatMoney(p, '.', ',')//+'  '
   
   var p=3;
   var text2=''
